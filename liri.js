@@ -1,29 +1,37 @@
 require("dotenv").config();
-var keys = require("./keys.js");
+let keys = require("./keys.js");
 let axios = require("axios");
 // let spotify = new Spotify(keys.spotify);
 let action = process.argv[2];
 
-
+//	*******************************************
+//					concert-this
+//	*******************************************
 
 // node liri.js concert-this <artiist/band name here>
 	// name of the venue
 	// venue location
 	// date of the event (use moment to format this as "MM/DD/YYYY")
 
+if (action === "concert-this"){
+	let artist = process.argv[3];
 
-	var bandsintown = require('bandsintown')(codingbootcamp);
- 
-	bandsintown
-	  .getArtistEventList('Skrillex')
-	  .then(function(events) {
-		// return array of events
-	  });
+axios.get("https://rest.bandsintown.com/artists/" + artist + "?app_id=codingbootcamp")
+	.then(
+		function(response){
+			console.log(response.venue);
+		}
+	);
+}
 
 
 
 
 
+
+//	*******************************************
+//				spotify-this-song
+//	*******************************************
 
 
 
@@ -46,28 +54,73 @@ let action = process.argv[2];
 
 
 
-
-
-
-
+//	*******************************************
+//					movie-this
+//	*******************************************
 
 
 // node liri.js movie-this '<movie name here>'
-/* this will output the following information to your terminal/bash window:
-	* Title of the movie.
-	* Year the movie came out.
-	* IMDB Rating of the movie.
-	* Rotten Tomatoes Rating of the movie.
-	* Country where the movie was produced.
-	* Language of the movie.
-	* Plot of the movie.
-	* Actors in the movie.
-*/
-// if the user doesn't type a movie in, the program will output data for the movie 'Mr. Nobody'
+	/* this will output the following information to your terminal/bash window:
+		* Title of the movie.
+		* Year the movie came out.
+		* IMDB Rating of the movie.
+		* Rotten Tomatoes Rating of the movie.
+		* Country where the movie was produced.
+		* Language of the movie.
+		* Plot of the movie.
+		* Actors in the movie.
+	*/
+	// if the user doesn't type a movie in, the program will output data for the movie 'Mr. Nobody'
 
-// you'll use the axios package to retrieve data from the OMDB API. Like all of the in-class
-	// activities, the OMDB API requires an API key. You may use trilogy.
+	// you'll use the axios package to retrieve data from the OMDB API. Like all of the in-class
+		// activities, the OMDB API requires an API key. You may use trilogy.
 
+
+
+
+
+
+//	********************************************************************************
+//	THE BELOW WORKS, JUST COMMENTED OUT TO NOT BE ANNOYING FOR CHECKING ABOVE CODES
+//	********************************************************************************
+
+// else if (action === "movie-this"){
+// 	let title = "Mr. Nobody";
+// 	let movieInput = process.argv[3];
+// 	if (movieInput){
+// 		title = movieInput;
+// 	}
+
+// 	axios.get("http://www.omdbapi.com/?t=" + title + "&y=&apikey=trilogy")
+// 		.then(
+// 			function (response) {
+// 				// console.log(response);
+// 				console.log("The movie's title is: " + response.data.Title);
+// 				console.log("The movie's release year is: " + response.data.Year);
+// 				console.log("The movie's IMDB rating is: " + response.data.imdbRating);
+// 				// console.log("The movie's Rotten Tomatoes rating is: " + response.data.tomatoRating);
+// 				console.log("The movie's country it was produced in is: " + response.data.Country);
+// 				console.log("The movie's plot is: " + response.data.Plot);
+// 				console.log("The movie's actors are: " + response.data.Actors);
+// 			}
+// 		);
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
 // node liri.js do-what-it-says
 	// using the fs node package, LIRI will take the text inside of random.txt and then use
 	// it to call one of LIRI's commands
@@ -78,9 +131,11 @@ let action = process.argv[2];
 
 
 
-// axios.get("http://www.omdbapi.com/?t=Alvin+And+The+Chipmunks&y=&plot=short&apikey=trilogy")
-// 	.then(
-// 		function (response) {
-// 			console.log("The movie's rating is: " + response.data.imdbRating);
-// 		}
-// 	);
+
+
+
+
+
+
+
+
