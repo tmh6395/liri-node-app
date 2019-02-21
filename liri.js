@@ -1,7 +1,9 @@
 require("dotenv").config();
 let keys = require("./keys.js");
+let bands = require("bandsintown");
 let axios = require("axios");
-// let spotify = new Spotify(keys.spotify);
+let Spotify = require("node-spotify-api");
+let spotify = new Spotify(keys.spotify);
 let action = process.argv[2];
 
 //	*******************************************
@@ -13,13 +15,18 @@ let action = process.argv[2];
 	// venue location
 	// date of the event (use moment to format this as "MM/DD/YYYY")
 
+
 if (action === "concert-this"){
 	let artist = process.argv[3];
-
-axios.get("https://rest.bandsintown.com/artists/" + artist + "?app_id=codingbootcamp")
+axios
+	.get("https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp")
 	.then(
 		function(response){
-			console.log(response.venue);
+			let results = response.data;
+			for (let i in results){
+				console.log("Venue name: ", results[i].venue.name);
+				console.log("Venue location: ", results[i].venue.city);
+			}
 		}
 	);
 }
