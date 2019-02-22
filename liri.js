@@ -1,64 +1,98 @@
+
+// NOTE
+// MIGRATE THE KEYS TO THE .ENV WHEN EVERYTHING ELSE IS CONFIRMED TO WORK
+
+// this line will be helpful:
+// let name = process.argv.slice(3).join(' ');
+
 require("dotenv").config();
 let keys = require("./keys.js");
-let bands = require("bandsintown");
 let axios = require("axios");
+let moment = require("moment");
 let Spotify = require("node-spotify-api");
+
 let spotify = new Spotify(keys.spotify);
 let action = process.argv[2];
+
 
 //	*******************************************
 //					concert-this
 //	*******************************************
 
+// Syntax for CLI:
 // node liri.js concert-this <artiist/band name here>
-	// name of the venue
-	// venue location
-	// date of the event (use moment to format this as "MM/DD/YYYY")
-
 
 if (action === "concert-this"){
-	let artist = process.argv[3];
+	let bandInput = process.argv.slice(3).join(' ');
 axios
-	.get("https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp")
+	.get("https://rest.bandsintown.com/artists/" + bandInput + "/events?app_id=codingbootcamp")
 	.then(
 		function(response){
 			let results = response.data;
 			for (let i in results){
 				console.log("Venue name: ", results[i].venue.name);
-				console.log("Venue location: ", results[i].venue.city);
+				console.log("Venue location: ", results[i].venue.city
+				+ " " + results[i].venue.region);
+				date = moment(results[i].datetime).format('MM/DD/YYYY');
+				console.log("Venue date: ", date);
+				console.log('\n');
 			}
 		}
 	);
 }
 
 
-
-
-
-
 //	*******************************************
 //				spotify-this-song
 //	*******************************************
 
-
-
+// Syntax for CLI:
 // node liri.js spotify-this-song '<song name here>'
-	// artist(s)
-	// the song's name
-	// a preview link of the song from spotify
-	// the album that the song is from
 
-	// if no song is provided then your program will default to "The Sign" by Ace of Base
+else if (action === "spotify-this-song"){
+	let defaultSong = "The Sign";
+	let defaultArtist = "Ace of Base";
+	let songInput = process.argv.slice(3).join(' ');
 
-	// you will utilize the node-spotify-api package in order to retrieve song information
-		//from the Spotify API
-	// client ID: 104db1fcf07745d781013016e18e3590
-	// client secret: c72f25d543e94a77aa3d87a6b9d0260e
+	if (!songInput){
+		spotify.search(
+			{
+				type: 'track',
+				query: defaultSong,
+				query: defaultArtist,
+			},
 
+			function(err, data) {
+			if (err) {
+			return console.log('Error occurred: ' + err);
+			}
+		
+			console.log("Artist(s): ", data.tracks.items[0].artists[0].name);
+			console.log("Song name: ", data.tracks.items[0].name);
+			console.log("Album name: ", data.tracks.items[0].album.name);
+			console.log("Preview URL: ", data.tracks.items[0].preview_url);
+		});
+	}
+	else{
+		spotify.search(
+			{
+				type: 'track',
+				query: songInput,
+			},
 
+			function(err, data) {
+			if (err) {
+			return console.log('Error occurred: ' + err);
+			}
+		
+			console.log("Artist(s): ", data.tracks.items[0].artists[0].name);
+			console.log("Song name: ", data.tracks.items[0].name);
+			console.log("Album name: ", data.tracks.items[0].album.name);
+			console.log("Preview URL: ", data.tracks.items[0].preview_url);
+		});
+	}
 
-
-
+}
 
 
 //	*******************************************
@@ -82,36 +116,28 @@ axios
 	// you'll use the axios package to retrieve data from the OMDB API. Like all of the in-class
 		// activities, the OMDB API requires an API key. You may use trilogy.
 
+		
+else if (action === "movie-this"){
+	let title = "Mr. Nobody";
+	let movieInput = process.argv.slice(3).join(' ');
+	if (movieInput){
+		title = movieInput;
+	}
 
-
-
-
-
-//	********************************************************************************
-//	THE BELOW WORKS, JUST COMMENTED OUT TO NOT BE ANNOYING FOR CHECKING ABOVE CODES
-//	********************************************************************************
-
-// else if (action === "movie-this"){
-// 	let title = "Mr. Nobody";
-// 	let movieInput = process.argv[3];
-// 	if (movieInput){
-// 		title = movieInput;
-// 	}
-
-// 	axios.get("http://www.omdbapi.com/?t=" + title + "&y=&apikey=trilogy")
-// 		.then(
-// 			function (response) {
-// 				// console.log(response);
-// 				console.log("The movie's title is: " + response.data.Title);
-// 				console.log("The movie's release year is: " + response.data.Year);
-// 				console.log("The movie's IMDB rating is: " + response.data.imdbRating);
-// 				// console.log("The movie's Rotten Tomatoes rating is: " + response.data.tomatoRating);
-// 				console.log("The movie's country it was produced in is: " + response.data.Country);
-// 				console.log("The movie's plot is: " + response.data.Plot);
-// 				console.log("The movie's actors are: " + response.data.Actors);
-// 			}
-// 		);
-// }
+	axios.get("http://www.omdbapi.com/?t=" + title + "&apikey=trilogy")
+		.then(
+			function (response) {
+				// console.log(response);
+				console.log("The movie's title is: " + response.data.Title);
+				console.log("The movie's release year is: " + response.data.Year);
+				console.log("The movie's IMDB rating is: " + response.data.Ratings[0].Value);
+				console.log("The movie's Rotten Tomatoes rating is: " + response.data.Ratings[1].Value);
+				console.log("The movie's country it was produced in is: " + response.data.Country);
+				console.log("The movie's plot is: " + response.data.Plot);
+				console.log("The movie's actors are: " + response.data.Actors);
+			}
+		);
+}
 
 
 
