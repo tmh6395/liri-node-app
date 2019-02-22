@@ -1,18 +1,13 @@
-
-// NOTE
-// MIGRATE THE KEYS TO THE .ENV WHEN EVERYTHING ELSE IS CONFIRMED TO WORK
-
-// this line will be helpful:
-// let name = process.argv.slice(3).join(' ');
-
 require("dotenv").config();
 let keys = require("./keys.js");
+let fs = require("fs");
 let axios = require("axios");
 let moment = require("moment");
 let Spotify = require("node-spotify-api");
-
 let spotify = new Spotify(keys.spotify);
 let action = process.argv[2];
+let userInput = process.argv.slice(3).join(' ');
+let isInputFromTextFile = false;
 
 
 //	*******************************************
@@ -22,23 +17,27 @@ let action = process.argv[2];
 // Syntax for CLI:
 // node liri.js concert-this <artiist/band name here>
 
-if (action === "concert-this"){
-	let bandInput = process.argv.slice(3).join(' ');
-axios
-	.get("https://rest.bandsintown.com/artists/" + bandInput + "/events?app_id=codingbootcamp")
-	.then(
-		function(response){
-			let results = response.data;
-			for (let i in results){
-				console.log("Venue name: ", results[i].venue.name);
-				console.log("Venue location: ", results[i].venue.city
-				+ " " + results[i].venue.region);
-				date = moment(results[i].datetime).format('MM/DD/YYYY');
-				console.log("Venue date: ", date);
-				console.log('\n');
+let concertThis = function (input) {
+	if (isInputFromTextFile) {
+		userInput = input;
+	}
+
+	axios
+		.get("https://rest.bandsintown.com/artists/" + userInput + "/events?app_id=codingbootcamp")
+		.then(
+			function (response) {
+				let results = response.data;
+				for (let i in results) {
+					console.log("Venue name: ", results[i].venue.name);
+					console.log("Venue location: ", results[i].venue.city
+						+ " " + results[i].venue.region);
+					date = moment(results[i].datetime).format('MM/DD/YYYY');
+					console.log("Venue date: ", date);
+					console.log('\n');
+				}
 			}
-		}
-	);
+		);
+	isInputFromTextFile = false;
 }
 
 
@@ -49,49 +48,68 @@ axios
 // Syntax for CLI:
 // node liri.js spotify-this-song '<song name here>'
 
-else if (action === "spotify-this-song"){
-	let defaultSong = "The Sign";
-	let defaultArtist = "Ace of Base";
-	let songInput = process.argv.slice(3).join(' ');
+let spotifyThisSong = function (input) {
 
-	if (!songInput){
+	if (!isInputFromTextFile) {
+		if (!userInput) {
+			// default 'the sign'
+			userInput = "The Sign";
+			defaultArtist = "Ace of Base";
+			spotify.search(
+				{
+					type: 'track',
+					query: userInput,
+					query: defaultArtist,
+				},
+				function (err, data) {
+					if (err) {
+						return console.log('Error occurred: ' + err);
+					}
+
+					console.log("Artist(s): ", data.tracks.items[0].artists[0].name);
+					console.log("Song name: ", data.tracks.items[0].name);
+					console.log("Album name: ", data.tracks.items[0].album.name);
+					console.log("Preview URL: ", data.tracks.items[0].preview_url);
+				});
+		}
+		else {
+			// song info about song from CLI
+			// userInput = process.argv.slice(3).join(' ');
+			spotify.search(
+				{
+					type: 'track',
+					query: userInput,
+				},
+				function (err, data) {
+					if (err) {
+						return console.log('Error occurred: ' + err);
+					}
+					console.log("Artist(s): ", data.tracks.items[0].artists[0].name);
+					console.log("Song name: ", data.tracks.items[0].name);
+					console.log("Album name: ", data.tracks.items[0].album.name);
+					console.log("Preview URL: ", data.tracks.items[0].preview_url);
+				});
+		}
+	}
+	else if (isInputFromTextFile) {
+		userInput = input;
 		spotify.search(
 			{
 				type: 'track',
-				query: defaultSong,
-				query: defaultArtist,
+				query: userInput,
 			},
+			function (err, data) {
+				if (err) {
+					return console.log('Error occurred: ' + err);
+				}
+				console.log("Artist(s): ", data.tracks.items[0].artists[0].name);
+				console.log("Song name: ", data.tracks.items[0].name);
+				console.log("Album name: ", data.tracks.items[0].album.name);
+				console.log("Preview URL: ", data.tracks.items[0].preview_url);
+			});
 
-			function(err, data) {
-			if (err) {
-			return console.log('Error occurred: ' + err);
-			}
-		
-			console.log("Artist(s): ", data.tracks.items[0].artists[0].name);
-			console.log("Song name: ", data.tracks.items[0].name);
-			console.log("Album name: ", data.tracks.items[0].album.name);
-			console.log("Preview URL: ", data.tracks.items[0].preview_url);
-		});
 	}
-	else{
-		spotify.search(
-			{
-				type: 'track',
-				query: songInput,
-			},
-
-			function(err, data) {
-			if (err) {
-			return console.log('Error occurred: ' + err);
-			}
-		
-			console.log("Artist(s): ", data.tracks.items[0].artists[0].name);
-			console.log("Song name: ", data.tracks.items[0].name);
-			console.log("Album name: ", data.tracks.items[0].album.name);
-			console.log("Preview URL: ", data.tracks.items[0].preview_url);
-		});
-	}
-
+	isInputFromTextFile = false;
 }
 
 
@@ -99,32 +117,23 @@ else if (action === "spotify-this-song"){
 //					movie-this
 //	*******************************************
 
-
+// Syntax for CLI:
 // node liri.js movie-this '<movie name here>'
-	/* this will output the following information to your terminal/bash window:
-		* Title of the movie.
-		* Year the movie came out.
-		* IMDB Rating of the movie.
-		* Rotten Tomatoes Rating of the movie.
-		* Country where the movie was produced.
-		* Language of the movie.
-		* Plot of the movie.
-		* Actors in the movie.
-	*/
-	// if the user doesn't type a movie in, the program will output data for the movie 'Mr. Nobody'
 
-	// you'll use the axios package to retrieve data from the OMDB API. Like all of the in-class
-		// activities, the OMDB API requires an API key. You may use trilogy.
+let movieThis = function (input) {
 
-		
-else if (action === "movie-this"){
-	let title = "Mr. Nobody";
-	let movieInput = process.argv.slice(3).join(' ');
-	if (movieInput){
-		title = movieInput;
+	if (isInputFromTextFile) {
+		userInput = input;
+	}
+	else {
+		userInput = "Mr. Nobody";
 	}
 
-	axios.get("http://www.omdbapi.com/?t=" + title + "&apikey=trilogy")
+	let movieInput = process.argv.slice(3).join(' ');
+	if (movieInput) {
+		userInput = movieInput;
+	}
+	axios.get("http://www.omdbapi.com/?t=" + userInput + "&apikey=trilogy")
 		.then(
 			function (response) {
 				// console.log(response);
@@ -137,38 +146,54 @@ else if (action === "movie-this"){
 				console.log("The movie's actors are: " + response.data.Actors);
 			}
 		);
+	isInputFromTextFile = false;
 }
 
 
+//	*******************************************
+//					do-what-it-says
+//	*******************************************
 
-
-
-
-
-
-
-
-
-
-
-
-
-	
+// Syntax for CLI:
 // node liri.js do-what-it-says
-	// using the fs node package, LIRI will take the text inside of random.txt and then use
-	// it to call one of LIRI's commands
-	// it should run spotify-this-song for "I Want it That Way" as follows the text
-	// in random.txt
-	// edit the text in random.txt to test out the feature for movie-this and concert-this
 
+if (action === "concert-this") {
+	concertThis();
+}
 
+else if (action === "spotify-this-song") {
+	spotifyThisSong();
+}
 
+else if (action === "movie-this") {
+	movieThis();
+}
 
+else if (action === "do-what-it-says") {
+	fs.readFile("random.txt", "utf8", function (error, data) {
 
+		if (error) {
+			return console.log(error);
+		}
+		newDirections = data.split(',');
+		action = newDirections[0];
 
+		inputFromText = newDirections[1];
+		inputFromText = inputFromText.split('\"')[1];
 
+		isInputFromTextFile = true;
 
+		if (action === "concert-this") {
+			concertThis(inputFromText);
+		}
 
+		else if (action === "spotify-this-song") {
+			spotifyThisSong(inputFromText);
+		}
 
+		else if (action === "movie-this") {
+			movieThis(inputFromText);
+		}
 
-
+	});
+}
