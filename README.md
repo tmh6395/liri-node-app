@@ -1,7 +1,7 @@
 # liri-node-app
 
 This app will take in arguments about either a band that will soon go on tour, a song that you'd like to hear on Spotify, or a movie of which you'd like to see the details.
-This app uses API keys from BandsInTown, Spotify, and the Open Movie Database (OMDB).  To access this information, you will need to use a command line interface and type in the appropriate syntax.
+This app uses API keys from BandsInTown, Spotify, and the Open Movie Database (OMDB).  There is also an extra option to read from a file and perform one of the previous three actions from there.  To access this information, you will need to use a command line interface and to type in the appropriate syntax.
 
 The syntax of the Command Line Interface (CLI) differs for each request, and each will be explained in their respective sections below.
 
@@ -45,3 +45,24 @@ The OMDB API will take in a movie title, given by you via the CLI, and will give
 * The country/countries that the movie was filmed in
 * A short summary of the plot of the movie
 * A list of actors that had roles the movie
+
+## Random
+
+This is the syntax for the CLI:
+
+* node liri.js do-what-it-says
+
+This command reads into a text file called 'random.txt' and displays information based on what is written inside.
+It is written as:
+* One of the three commands listed above
+* A comma (,)
+* the band/song/movie within quotes
+
+This will read the random.txt file and perform the command listed within it, while using the band/song/movie written afterwards as an argument.
+
+
+# Video Demonstration of the App:
+
+<video controls autoplay>
+    <source src="LIRI App Demonstration.webm" type="video/webm"/>
+</video>
