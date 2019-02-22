@@ -11,7 +11,7 @@ At the very bottom is a video showcasing the app in action.
 
 This is the syntax for the CLI:
 
-* *node liri.js concert-this "_artist/band name here_"
+* node liri.js concert-this "_artist/band name here_"
 
 The BandsInTown API will take in a band or music artist, given by you via the CLI, and will give the following details:
 * The name of the venue where the tour will be held
@@ -64,5 +64,5 @@ This will read the random.txt file and perform the command listed within it, whi
 # Video Demonstration of the App:
 
 <video controls autoplay>
-    <source src="LIRI App Demonstration.webm" type="video/webm"/>
+    <source src="liri-app-demonstration.webm" type="video/webm"/>
 </video>
