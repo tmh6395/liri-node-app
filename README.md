@@ -65,5 +65,4 @@ This will read the random.txt file and perform the command listed within it, whi
 
 [Link to YouTube Video Demonstration (Click Hyperlink or Image Below)](https://www.youtube.com/watch?v=-fqB75Txxds)
 
-
-[![Link to YouTube Video Demonstration](https://www.youtube.com/watch?v=-fqB75Txxds "Video Title")
+[![Link to YouTube Video Demonstration](http://img.youtube.com/vi/-fqB75Txxds/0.jpg)](http://www.youtube.com/watch?v=-fqB75Txxds "Video Title")
