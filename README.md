@@ -63,6 +63,4 @@ This will read the random.txt file and perform the command listed within it, whi
 
 # Video Demonstration of the App:
 
-<video controls autoplay>
-    <source src="liri-app-demonstration.webm" type="video/webm"/>
-</video>
+[Link to YouTube Video Demonstration](https://www.youtube.com/watch?v=-fqB75Txxds)
