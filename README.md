@@ -66,4 +66,4 @@ This will read the random.txt file and perform the command listed within it, whi
 [Link to YouTube Video Demonstration (Click Hyperlink or Image Below)](https://www.youtube.com/watch?v=-fqB75Txxds)
 
 
-[![Link to YouTube Video Demonstration](<iframe width="560" height="315" src="https://www.youtube.com/embed/-fqB75Txxds" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe> "Video Title")
+[![Link to YouTube Video Demonstration](https://www.youtube.com/watch?v=-fqB75Txxds "Video Title")
